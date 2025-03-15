@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: la_app
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_DATABASE: "${DB_DATABASE:-app_db}"
+      DB_USERNAME: "${DB_USERNAME:-laravel}"
+      DB_PASSWORD: "${DB_PASSWORD:-password}"
+
+  db:
+    image: mysql:5.7
+    container_name: la_db
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE:-app_db}"
+      MYSQL_USER: "${MYSQL_USER:-laravel}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-password}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_PASSWORD:-password}"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
